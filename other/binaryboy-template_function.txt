@@ -1,0 +1,65 @@
+    // Call the specified member of each plugin until one returns true. 0 parameters
+    template<typename _Fn1>
+    bool until_handled( _Fn1 f) const
+    {
+        for(PLUGINS::const_iterator i = Plugins.begin(); i != Plugins.end(); ++i)
+            if(((*i)->*f)())
+                return true;
+        return false;
+    }
+
+    // Call the specified member of each plugin until one returns true. 1 parameters
+    template<typename _Fn1, typename A>
+    bool until_handled( _Fn1 f, A a) const
+    {
+        for(PLUGINS::const_iterator i = Plugins.begin(); i != Plugins.end(); ++i)
+            if(((*i)->*f)(a))
+                return true;
+        return false;
+    }
+
+    // Call the specified member of each plugin until one returns true. 2 parameters
+    template<typename _Fn1, typename A, typename B>
+    bool until_handled( _Fn1 f, A a, B b) const
+    {
+        for(PLUGINS::const_iterator i = Plugins.begin(); i != Plugins.end(); ++i)
+            if(((*i)->*f)(a,b))
+                return true;
+        return false;
+    }
+
+    // Call the specified member of each plugin until one returns true. 3 parameters
+    template<typename _Fn1, typename A, typename B, typename C>
+    bool until_handled( _Fn1 f, A a, B b, C c) const
+    {
+        for(PLUGINS::const_iterator i = Plugins.begin(); i != Plugins.end(); ++i)
+            if(((*i)->*f)(a,b,c))
+                return true;
+        return false;
+    }
+
+/*******************************************************************************/
+
+    // Call the specified member of all plugins with no parameters
+    template<typename _Fn1>
+    bool all_plugins( _Fn1 f) const
+    {
+        for(PLUGINS::const_iterator i = Plugins.begin(); i != Plugins.end(); ++i)
+            ((*i)->*f)();
+
+        return false;
+    }
+
+    // Call the specified member of all plugins with one parameter
+    template<typename _Fn1, typename A>
+    bool all_plugins( _Fn1 f, A a) const
+    {
+        for(PLUGINS::const_iterator i = Plugins.begin(); i != Plugins.end(); ++i)
+            ((*i)->*f)(a);
+
+        return false;
+    }
+
+
+    bool OnInit() const { return all_plugins(&CBBPlugin::OnInit); } // Exapmple of 0 parameters
+    bool OnStart(BBINFO& bbinfo) const { return all_plugins(&CBBPlugin::OnStart, bbinfo); } // Example of 1 parameter
