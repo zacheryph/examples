@@ -8,7 +8,7 @@
 
 #include "tcl.h"
 
-static int tcl_mycout (ClientData, Tcl_Interp*, int, char**);
+static int tcl_mycout (ClientData, Tcl_Interp*, int, const char**);
 
 int main (int argc, char *argv[])
 {
@@ -45,7 +45,7 @@ int main (int argc, char *argv[])
 	return 0;
 }
 
-static int tcl_mycout (ClientData cd, Tcl_Interp *tcl, int argc, char **argv)
+static int tcl_mycout (ClientData cd, Tcl_Interp *tcl, int argc, const char **argv)
 {
 	std::cout << "tcl_mycout: " << argv[1] << "\n";
 	return TCL_OK;

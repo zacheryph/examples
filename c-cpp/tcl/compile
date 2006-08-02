@@ -1,0 +1,2 @@
+#!/bin/sh
+g++ -o example example_tcl.cc -ltcl
