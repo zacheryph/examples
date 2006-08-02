@@ -1,4 +1,4 @@
-echo g++ -pipe -O2 -o dlopen dlopen.cc
-g++ -pipe -O2 -o dlopen dlopen.cc
+echo g++ -pipe -O2 -o dlopen dlopen.cc -ldl
+g++ -pipe -O2 -o dlopen dlopen.cc -ldl
 echo g++ -pipe -O2 -shared -fPIC -o dlopen_lib.so dlopen_lib.cc
 g++ -pipe -O2 -shared -fPIC -o dlopen_lib.so dlopen_lib.cc
