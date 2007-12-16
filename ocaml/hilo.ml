@@ -7,4 +7,9 @@ let rec hilo n =
     hilo n
   end
 
+(* this is like main()
+ *
+ * technically it can be anything
+ * i see let _ = a lot of places as well
+ *)
 let () = hilo 64 ;;
