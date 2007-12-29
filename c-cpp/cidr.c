@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <sys/socket.h>
@@ -25,11 +27,11 @@
 
 #define BROADCAST 0xffffffff
 
-int printbin(const char *msg, long num) {
+void printbin(const char *msg, long num) {
 	long counter;
 
 	printf ("%s: ", msg);
-	
+
 	for (counter=31; counter>=0; counter--)
 		printf("%d", (num >> counter) & 1);
 	putchar('\n');
@@ -59,18 +61,18 @@ int main (int argc, char **argv)
 	hostaddr = ntohl(addr.s_addr);
 
 	netmask.s_addr = ntohl(BROADCAST << (32-maskbits));
-	//printbin("netmask:   ", netmask.s_addr);
+	/* printbin("netmask:   ", netmask.s_addr); */
 	network.s_addr = addr.s_addr & netmask.s_addr;
-	//printbin("network:   ", network.s_addr);
+	/* printbin("network:   ", network.s_addr); */
 	broadcast.s_addr = network.s_addr | ntohl(BROADCAST >> maskbits);
-	//printbin("broadcast: ", broadcast.s_addr);
-	
+	/* printbin("broadcast: ", broadcast.s_addr); */
+
 	printf (" cidr: %s/%d\n", inet_ntoa(addr), maskbits);
 	printf (" conf: %s ", inet_ntoa(addr));
 	printf ("%s\n", inet_ntoa(netmask));
 	printf ("range: %s - ", inet_ntoa(network));
 	printf ("%s (%d usable)\n", inet_ntoa(broadcast), (BROADCAST >> maskbits)-1);
-/*	
+/*
 	printf ("cidr: ip(%s)\n", inet_ntoa(addr));
 	printf ("cidr: netmask(%s)\n", inet_ntoa(netmask));
 	printf ("cidr: network(%s)\n", inet_ntoa(network));
