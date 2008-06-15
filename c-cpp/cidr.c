@@ -31,7 +31,6 @@ void printbin(const char *msg, long num) {
 	long counter;
 
 	printf ("%s: ", msg);
-
 	for (counter=31; counter>=0; counter--)
 		printf("%d", (num >> counter) & 1);
 	putchar('\n');
@@ -61,24 +60,14 @@ int main (int argc, char **argv)
 	hostaddr = ntohl(addr.s_addr);
 
 	netmask.s_addr = ntohl(BROADCAST << (32-maskbits));
-	/* printbin("netmask:   ", netmask.s_addr); */
 	network.s_addr = addr.s_addr & netmask.s_addr;
-	/* printbin("network:   ", network.s_addr); */
 	broadcast.s_addr = network.s_addr | ntohl(BROADCAST >> maskbits);
-	/* printbin("broadcast: ", broadcast.s_addr); */
 
 	printf (" cidr: %s/%d\n", inet_ntoa(addr), maskbits);
 	printf (" conf: %s ", inet_ntoa(addr));
 	printf ("%s\n", inet_ntoa(netmask));
 	printf ("range: %s - ", inet_ntoa(network));
 	printf ("%s (%d usable)\n", inet_ntoa(broadcast), (BROADCAST >> maskbits)-1);
-/*
-	printf ("cidr: ip(%s)\n", inet_ntoa(addr));
-	printf ("cidr: netmask(%s)\n", inet_ntoa(netmask));
-	printf ("cidr: network(%s)\n", inet_ntoa(network));
-	printf ("cidr: broadcast(%s)\n", inet_ntoa(broadcast));
-	printf ("cidr: usable hosts: %d\n", (BROADCAST >> maskbits)-1);
-*/
 	return 0;
 }
 
