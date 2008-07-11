@@ -1,0 +1,9 @@
+Dear %{name},
+  We would like to congratulate you for winning the
+  %{award} Award.  We will be giving the awards away
+  at the event on %{date}.  If you have any questions
+  please call %{phone}.
+
+  Sincerely,
+
+  %{author}
