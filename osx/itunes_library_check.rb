@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'find'
 require 'plist'
+require 'uri'
 
 itunes_path = File.join ENV['HOME'], 'Music', 'iTunes'
 music_path = File.join itunes_path, 'iTunes Music'
