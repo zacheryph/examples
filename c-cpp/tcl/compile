@@ -1,2 +1,2 @@
 #!/bin/sh
-g++ -o example example_tcl.cc -ltcl
+gcc -W -Wall -Wno-unused-parameter -pedantic example_tcl.c -o example -ltcl
