@@ -4,7 +4,7 @@ require 'plist'
 require 'uri'
 
 itunes_path = File.join ENV['HOME'], 'Music', 'iTunes'
-music_path = File.join itunes_path, 'iTunes Music'
+music_path = File.join itunes_path, 'iTunes Media', 'Music'
 lib_path = File.join itunes_path, 'iTunes Music Library.xml'
 
 puts ":: Parsing iTunes Library File..."
