@@ -101,3 +101,18 @@ puts
 Minion.new.direct
 # "Im Here Still"
 # "Im Here Still"
+
+# A half useful example
+class SomethingAwesome
+  include Defer
+
+  def do_alot_of_stuff
+    with_defer do
+      log = Log.open_some_file
+      defer { log.close } # really ensure we close our log
+      #...
+      #  lots of important stuff here
+      #...
+    end
+  end
+end
