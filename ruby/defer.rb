@@ -5,8 +5,6 @@ require 'delegate'
 require 'logger'
 
 class DeferBlock < SimpleDelegator
-  attr_accessor :__stack
-
   def self.run(base, &block)
     d = self.new(base)
     d.instance_eval &block
