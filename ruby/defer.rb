@@ -97,8 +97,17 @@ Minion.new.interpolate
 
 puts
 Minion.new.direct
-# "Im Here Still"
-# "Im Here Still"
+# Direct Last: "Im Here Still"
+# Direct Defer: "Im Here Still"
+
+puts
+Defer.run do
+  defer { puts "Run Block: Defered" }
+  puts "Run Block: Last"
+end
+# Run Block: Last
+# Run Block: Defered
+
 
 # A half useful example
 class SomethingAwesome
