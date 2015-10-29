@@ -8,8 +8,6 @@ module WithRefine
   end
 
   class Path
-    using StringHack
-
     def method_missing(meth)
       meth.to_s
     end
