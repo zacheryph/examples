@@ -1,0 +1,10 @@
+[package]
+name = "ipcheck"
+version = "0.1.0"
+authors = ["Zachery Hostens <zacheryph@gmail.com>"]
+
+[dependencies]
+reqwest = "0.8.5"
+serde = "1.0.45"
+serde_derive = "1.0.45"
+serde_json = "1.0.17"
