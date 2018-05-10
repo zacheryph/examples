@@ -78,11 +78,4 @@ fn main() {
         Some(Detail::Total) => print_totals(loan),
         None => print_first(loan),
     }
-
-    // for p in loan {
-    //     println!(
-    //         "Pay:{:.2} Int:{:.2} Pri:{:.2} Left:{:.2}",
-    //         p.amount, p.interest, p.principal, p.balance
-    //     );
-    // }
 }
