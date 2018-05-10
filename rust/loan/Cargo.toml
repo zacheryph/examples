@@ -1,0 +1,7 @@
+[package]
+name = "loan"
+version = "0.1.0"
+authors = ["Zachery Hostens <zacheryph@gmail.com>"]
+
+[dependencies]
+structopt = "0.2.8"
