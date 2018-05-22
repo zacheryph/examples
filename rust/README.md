@@ -2,15 +2,26 @@
 
 just learning rust
 
-# fizzbuzz
+## chat
+
+chat server. a sort of 'tribute' to IRC protocol. A way for learning
+Tokio and task handling, async ownership, more advanced stdlib/tokio
+thank i should be biting so early. heavily based on Tokio docs/chat
+example. Code commented for reasonings on doing things they way I
+wanted to do them.
+
+Read the commit history for details on where code derived and where
+it is headed.
+
+## fizzbuzz
 
 doesn't need much introduction.
 
-# ipcheck
+## ipcheck
 
-just hits jsonip.io to pull info. this was more for messing with and/or
+just hits jsonip.io to pull info. this was just for messing with and/or
 learning the basics of reqwest and serde.
 
-# loan
+## loan
 
-calculate loan payoff / table blah
+calculate loan payoff / amortization table. exercise i like to do.
