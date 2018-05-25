@@ -4,4 +4,5 @@ version = "0.1.0"
 authors = ["Zachery Hostens <zacheryph@gmail.com>"]
 
 [dependencies]
+bytes = "0.4.7"
 tokio = "0.1.6"
