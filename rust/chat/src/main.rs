@@ -1,18 +1,26 @@
+extern crate bytes;
 extern crate tokio;
 
-use std::io::{BufRead, BufReader};
+use std::io::{BufReader, ErrorKind};
 use std::net::SocketAddr;
 // use std::sync::{Arc, Mutex};
 
-use tokio::io::{lines, Lines, ReadHalf};
+use bytes::BytesMut;
+
+use tokio::io::{lines, Lines, ReadHalf, WriteHalf};
 use tokio::net::{TcpListener, TcpStream};
 use tokio::prelude::*;
+
+type TcpLines = Lines<BufReader<ReadHalf<TcpStream>>>;
 
 /// Link
 #[derive(Debug)]
 struct Link {
+    addr: SocketAddr,
     nick: String,
-    rx: Lines<BufReader<ReadHalf<TcpStream>>>,
+    rx: TcpLines,
+    tx: WriteHalf<TcpStream>,
+    tx_buf: BytesMut,
 }
 
 /// register a new connection. handles registration of a new connection
@@ -25,16 +33,19 @@ fn register(tcp: TcpStream) -> RegisterFuture {
     let rx = lines(BufReader::new(rx));
 
     let fut = RegisterFuture {
+        addr: Some(addr),
         nick: None,
         rx: Some(rx),
+        tx: Some(tx),
     };
 
     fut
 }
 
 struct RegisterFuture {
-    rx: Option<Lines<BufReader<ReadHalf<TcpStream>>>>,
-    // tx: Option<?!?!>,
+    addr: Option<SocketAddr>,
+    rx: Option<TcpLines>,
+    tx: Option<WriteHalf<TcpStream>>,
     nick: Option<String>,
 }
 
@@ -52,19 +63,73 @@ impl Future for RegisterFuture {
                         break;
                     }
                     Ok(Async::NotReady) => return Ok(Async::NotReady),
-                    Err(e) => return Err(()),
+                    Err(_) => return Err(()),
                 }
             }
         }
 
         if let Some(_) = self.nick {
             Ok(Async::Ready(Link {
+                addr: self.addr.take().unwrap(),
                 rx: self.rx.take().unwrap(),
+                tx: self.tx.take().unwrap(),
+                tx_buf: BytesMut::new(),
                 nick: self.nick.take().unwrap(),
             }))
         } else {
             Ok(Async::NotReady)
         }
+    }
+}
+
+/// Peer handles client connections
+struct Peer {
+    link: Link,
+}
+
+impl Peer {
+    fn new(link: Link) -> Peer {
+        Peer { link }
+    }
+}
+
+impl Future for Peer {
+    type Item = ();
+    type Error = ();
+
+    fn poll(&mut self) -> Poll<Self::Item, Self::Error> {
+        const LINES_PER_TICK: usize = 10;
+
+        for i in 0..LINES_PER_TICK {
+            match self.link.rx.poll() {
+                Ok(Async::Ready(Some(l))) => {
+                    let b = l.as_bytes();
+                    self.link.tx_buf.reserve(b.len());
+                    self.link.tx_buf.extend_from_slice(&b);
+                    self.link.tx_buf.extend_from_slice(b"\r\n");
+                    if i + 1 == LINES_PER_TICK {
+                        task::current().notify();
+                    }
+                }
+                Err(_) => return Err(()),
+                _ => break,
+            }
+        }
+
+        if !self.link.tx_buf.is_empty() {
+            match self.link.tx.write(&self.link.tx_buf) {
+                Ok(0) => return Err(()),
+                Ok(n) => self.link.tx_buf.advance(n),
+                Err(ref e) if e.kind() == ErrorKind::Interrupted => {}
+                Err(_) => return Err(()),
+            }
+        }
+
+        if !self.link.tx_buf.is_empty() {
+            task::current().notify();
+        }
+
+        Ok(Async::NotReady)
     }
 }
 
@@ -75,11 +140,7 @@ fn main() {
     let server = listener
         .incoming()
         .for_each(|conn| {
-            let client = register(conn)
-                // .and_then(|link| Peer::new(link, &state))
-                .and_then(|link| {
-                    println!("Link: {:?}", link); return Ok(())
-                });
+            let client = register(conn).and_then(|link| Peer::new(link));
             // .map_err(|err| println!("Connection failure: {}", err));
 
             tokio::spawn(client);
