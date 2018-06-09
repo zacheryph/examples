@@ -105,9 +105,9 @@ pub fn print_totals(loan: Loan) {
         total_principal += p.principal;
     }
 
-    println!("Total Interest Payments: ${:.2}", total_interest);
+    println!("Total Interest Payed: ${:.2}", total_interest);
     println!(
-        "Total Amount Payed:      ${:.2}",
+        "Total Amount Payed:   ${:.2}",
         total_interest + total_principal
     );
 }
