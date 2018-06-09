@@ -29,6 +29,9 @@ fn main() {
         })
         .map_err(|_| ());
 
+    // timer::Interval / ticker
+    // this just shows having a future/stream interval executing
+    // soemthing every 10 seconds
     let tick = Interval::new(Instant::now(), Duration::from_secs(10))
         .for_each(|ts| {
             println!("tick: {:?}", ts);
@@ -36,6 +39,10 @@ fn main() {
         })
         .map_err(|_| ());
 
+    // since tokio::run() blocks, we need a way to initiate both
+    // futures. you cannot tokio::spawn() before tokio::run() because
+    // the reactor is not started yet. using lazy here just lets us
+    // spawn the independent futures to go off and do their own thing
     let kicker = lazy(|| {
         tokio::spawn(tick);
         tokio::spawn(events);
