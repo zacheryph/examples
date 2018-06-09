@@ -25,3 +25,10 @@ learning the basics of reqwest and serde.
 ## loan
 
 calculate loan payoff / amortization table. exercise i like to do.
+
+## tokio-fun
+
+this is to get to know tokio a little bit more (.... or less? who knows.)
+
+currently experiments with `tokio-inotify` and `futures::timer` for
+running a job constantly and set intervals (tick)
