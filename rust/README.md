@@ -32,3 +32,8 @@ this is to get to know tokio a little bit more (.... or less? who knows.)
 
 currently experiments with `tokio-inotify` and `futures::timer` for
 running a job constantly and set intervals (tick)
+
+## capnp-fun
+
+quick experiment with capnp-rpc. would probably want to add some sort
+of simple wrapper to make simple calls a little easier in tokio/futures.

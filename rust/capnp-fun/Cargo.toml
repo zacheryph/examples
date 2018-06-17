@@ -1,0 +1,13 @@
+[package]
+name = "rpc-fun"
+version = "0.1.0"
+authors = ["Zachery Hostens <zacheryph@gmail.com>"]
+
+[build-dependencies]
+capnpc = "0.8"
+
+[dependencies]
+capnp = "0.8"
+capnp-rpc = "0.8"
+futures = "0.1"
+tokio = "0.1"
