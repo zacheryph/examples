@@ -37,3 +37,8 @@ running a job constantly and set intervals (tick)
 
 quick experiment with capnp-rpc. would probably want to add some sort
 of simple wrapper to make simple calls a little easier in tokio/futures.
+
+## pswd-read
+
+quick test of serde & csv to see that it can read non-headered 'csv'
+files into struct's.
