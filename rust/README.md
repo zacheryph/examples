@@ -40,5 +40,11 @@ of simple wrapper to make simple calls a little easier in tokio/futures.
 
 ## pswd-read
 
+* serde
+* csv
+* sled
+* bincode
+
 quick test of serde & csv to see that it can read non-headered 'csv'
-files into struct's.
+files into struct's. this also displays using bincode and sled for storing
+data within a sled store, and pulling data back out.
