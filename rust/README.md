@@ -2,6 +2,13 @@
 
 just learning rust
 
+## very basics
+
+* fizzbuzz - enough said
+* ipcheck - simple reqwest/serde-json example
+* loan - loan pay/amortization table exercise i like to do
+* typeid - seeing how `std::any` works regarding ID'ing structs
+
 ## chat
 
 chat server. a sort of 'tribute' to IRC protocol. A way for learning
@@ -12,19 +19,6 @@ wanted to do them.
 
 Read the commit history for details on where code derived and where
 it is headed.
-
-## fizzbuzz
-
-doesn't need much introduction.
-
-## ipcheck
-
-just hits jsonip.io to pull info. this was just for messing with and/or
-learning the basics of reqwest and serde.
-
-## loan
-
-calculate loan payoff / amortization table. exercise i like to do.
 
 ## tokio-fun
 

@@ -1,0 +1,6 @@
+[package]
+name = "typeid"
+version = "0.1.0"
+authors = ["Zachery Hostens <zacheryph@gmail.com>"]
+
+[dependencies]
