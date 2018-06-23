@@ -7,7 +7,7 @@ extern crate serde_derive;
 use std::io;
 
 use bincode::{deserialize, serialize};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sled::{ConfigBuilder, Tree};
 
 fn open_sled() -> Result<Tree, io::Error> {
@@ -31,25 +31,36 @@ struct Two {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-enum Types {
-    One(Option<String>),
-    Two(Option<String>),
-    Three(Option<String>),
+enum KeyType {
+    One,
+    Two,
+    Three,
 }
+
+enum MapType {
+    UidMap,
+    GidMap,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Key(KeyType, Option<String>);
+struct Map(MapType, Option<i32>);
 
 trait Keyed {
-    fn store_key(&self) -> Types;
+    fn store_key(&self) -> Key;
 }
 
+trait Storable {}
+
 impl<'a> Keyed for &'a One {
-    fn store_key(&self) -> Types {
-        Types::One(Some(self.name.clone()))
+    fn store_key(&self) -> Key {
+        Key(KeyType::One, Some(self.name.clone()))
     }
 }
 
 impl<'a> Keyed for &'a Two {
-    fn store_key(&self) -> Types {
-        Types::Two(Some(self.name.clone()))
+    fn store_key(&self) -> Key {
+        Key(KeyType::Two, Some(self.name.clone()))
     }
 }
 
@@ -63,28 +74,49 @@ where
     ).unwrap();
 }
 
+// BROKEN: `v` does not live long enough
+//         borrowed value must be valid for the lifetime 'a as defined on the function body
+fn find_rec<'a, K, T>(db: &Tree, key: &K) -> Result<Option<T>, io::Error>
+where
+    K: Serialize,
+    T: Deserialize<'a> + Clone,
+{
+    match db.get(&serialize(key).unwrap()) {
+        Ok(Some(v)) => {
+            let ret: T = deserialize(&v).unwrap();
+            let ret = ret.clone();
+            Ok(Some(ret))
+        }
+        Ok(None) => {
+            println!("NOT FOUND");
+            Ok(None)
+        }
+        Err(e) => Err(io::Error::new(io::ErrorKind::Other, e)),
+    }
+}
+
 fn main() {
-    // let o1 = One { name: "o1".into() };
-    // let o2 = One { name: "o2".into() };
-    // let o3 = One { name: "o3".into() };
-    // let t1 = Two { name: "t1".into() };
-    // let t2 = Two { name: "t2".into() };
-    // let t3 = Two { name: "t3".into() };
+    let o1 = One { name: "o1".into() };
+    let o2 = One { name: "o2".into() };
+    let o3 = One { name: "o3".into() };
+    let t1 = Two { name: "t1".into() };
+    let t2 = Two { name: "t2".into() };
+    let t3 = Two { name: "t3".into() };
 
     let db = open_sled().unwrap();
-    // store_rec(&db, &o1);
-    // store_rec(&db, &o2);
-    // store_rec(&db, &o3);
-    // store_rec(&db, &t1);
-    // store_rec(&db, &t2);
-    // store_rec(&db, &t3);
+    store_rec(&db, &o1);
+    store_rec(&db, &o2);
+    store_rec(&db, &o3);
+    store_rec(&db, &t1);
+    store_rec(&db, &t2);
+    store_rec(&db, &t3);
 
-    let iter = db.scan(&serialize(&Types::One(None)).unwrap());
+    let iter = db.scan(&serialize(&Key(KeyType::One, None)).unwrap());
     for rec in iter {
         let (k, v) = rec.unwrap();
-        let rec: Types = deserialize(&k).unwrap();
+        let rec: Key = deserialize(&k).unwrap();
         match rec {
-            Types::One(tk) => {
+            Key(KeyType::One, tk) => {
                 let r: One = deserialize(&v).unwrap();
                 println!("ONE: {:?} => {:?}", tk, r)
             }
@@ -92,12 +124,12 @@ fn main() {
         }
     }
 
-    let iter = db.scan(&serialize(&Types::Two(None)).unwrap());
+    let iter = db.scan(&serialize(&Key(KeyType::Two, None)).unwrap());
     for rec in iter {
         let (k, v) = rec.unwrap();
-        let rec: Types = deserialize(&k).unwrap();
+        let rec: Key = deserialize(&k).unwrap();
         match rec {
-            Types::Two(tk) => {
+            Key(KeyType::Two, tk) => {
                 let r: Two = deserialize(&v).unwrap();
                 println!("TWO: {:?} => {:?}", tk, r)
             }
