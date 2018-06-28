@@ -7,3 +7,4 @@ authors = ["Zachery Hostens <zacheryph@gmail.com>"]
 futures = "0.1"
 tokio = "0.1"
 tokio-inotify = "0.4"
+# inotify = "0.5"

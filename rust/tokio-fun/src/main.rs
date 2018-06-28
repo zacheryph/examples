@@ -16,6 +16,11 @@ fn main() {
     // inotify testing
     // we do the directory. if you do a single file you would have to do
     // a notifier & future for each file as the Event doesnt give a `name`
+    //
+    // NOTE: inotify-0.5 has an EventStream implementation but it is not
+    //       a usable solution until the following PR is merged/released.
+    //       until then the future always reschedules itself pegging a CPU.
+    //       https://github.com/inotify-rs/inotify/pull/105
     let file_name = String::from(".");
     let notifier = AsyncINotify::init().unwrap();
     notifier

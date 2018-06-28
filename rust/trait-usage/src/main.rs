@@ -7,7 +7,8 @@ extern crate serde_derive;
 use std::io;
 
 use bincode::{deserialize, serialize};
-use serde::{Deserialize, Serialize};
+use serde::de::DeserializeOwned;
+use serde::Serialize;
 use sled::{ConfigBuilder, Tree};
 
 fn open_sled() -> Result<Tree, io::Error> {
@@ -37,14 +38,8 @@ enum KeyType {
     Three,
 }
 
-enum MapType {
-    UidMap,
-    GidMap,
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 struct Key(KeyType, Option<String>);
-struct Map(MapType, Option<i32>);
 
 trait Keyed {
     fn store_key(&self) -> Key;
@@ -74,23 +69,20 @@ where
     ).unwrap();
 }
 
-// BROKEN: `v` does not live long enough
-//         borrowed value must be valid for the lifetime 'a as defined on the function body
-fn find_rec<'a, K, T>(db: &Tree, key: &K) -> Result<Option<T>, io::Error>
+// NOTE: DeserializeOwned is used here cause we return ownership of T
+//       which is being deserialized from the sled store. Otherwise
+//       we would have to keep instances of T around somewhere.
+fn find_rec<'a, K, T>(db: &Tree, key: K) -> Result<Option<T>, io::Error>
 where
     K: Serialize,
-    T: Deserialize<'a> + Clone,
+    T: DeserializeOwned,
 {
-    match db.get(&serialize(key).unwrap()) {
+    match db.get(&serialize(&key).unwrap()) {
         Ok(Some(v)) => {
             let ret: T = deserialize(&v).unwrap();
-            let ret = ret.clone();
             Ok(Some(ret))
         }
-        Ok(None) => {
-            println!("NOT FOUND");
-            Ok(None)
-        }
+        Ok(None) => Ok(None),
         Err(e) => Err(io::Error::new(io::ErrorKind::Other, e)),
     }
 }
@@ -110,6 +102,18 @@ fn main() {
     store_rec(&db, &t1);
     store_rec(&db, &t2);
     store_rec(&db, &t3);
+
+    let ro1: Option<One> = find_rec(&db, Key(KeyType::One, Some("o1".into()))).unwrap();
+    match ro1 {
+        Some(o) => println!("Found One: {:?}", o),
+        None => println!("Not Found!"),
+    }
+
+    let ro1: Option<One> = find_rec(&db, Key(KeyType::One, Some("o5".into()))).unwrap();
+    match ro1 {
+        Some(o) => println!("Found One: {:?}", o),
+        None => println!("Not Found!"),
+    }
 
     let iter = db.scan(&serialize(&Key(KeyType::One, None)).unwrap());
     for rec in iter {
@@ -136,4 +140,6 @@ fn main() {
             _ => break,
         }
     }
+
+    println!("OUR TREE: {:?}", db);
 }
