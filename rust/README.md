@@ -42,3 +42,9 @@ of simple wrapper to make simple calls a little easier in tokio/futures.
 quick test of serde & csv to see that it can read non-headered 'csv'
 files into struct's. this also displays using bincode and sled for storing
 data within a sled store, and pulling data back out.
+
+## trait-usage
+
+more serde & sled fun here. just getting more hands on with traits and
+generics and lifetimes very little. need to do a lot more reading to
+fully understand lifetime semantics though
