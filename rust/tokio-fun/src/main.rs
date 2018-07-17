@@ -1,16 +1,14 @@
 extern crate futures;
 extern crate tokio;
-extern crate tokio_inotify;
+extern crate inotify;
 
-use std::path::Path;
 use std::time::{Duration, Instant};
 
 use futures::future::lazy;
 use futures::prelude::*;
 use futures::stream::Stream;
+use inotify::{Inotify, WatchMask};
 use tokio::timer::Interval;
-use tokio_inotify::AsyncINotify;
-use tokio_inotify::{IN_CLOSE_WRITE, IN_MODIFY};
 
 fn main() {
     // inotify testing
@@ -21,18 +19,25 @@ fn main() {
     //       a usable solution until the following PR is merged/released.
     //       until then the future always reschedules itself pegging a CPU.
     //       https://github.com/inotify-rs/inotify/pull/105
-    let file_name = String::from(".");
-    let notifier = AsyncINotify::init().unwrap();
-    notifier
-        .add_watch(Path::new(&file_name), IN_MODIFY | IN_CLOSE_WRITE)
-        .unwrap();
-
-    let events = notifier
-        .for_each(|ev| {
-            println!("Event:{:?} => {:?}", ev.name.to_str(), ev);
-            Ok(())
-        })
-        .map_err(|_| ());
+    // let file_name = String::from(".");
+    // let notifier = AsyncINotify::init().unwrap();
+    // notifier
+    //     .add_watch(Path::new(&file_name), IN_MODIFY | IN_CLOSE_WRITE)
+    //     .unwrap();
+    // 
+    // let events = notifier
+    //     .for_each(|ev| {
+    //         println!("Event:{:?} => {:?}", ev.name.to_str(), ev);
+    //         Ok(())
+    //     })
+    //     .map_err(|_| ());
+    let mut notifier = Inotify::init().unwrap();
+    notifier.add_watch(".", WatchMask::MODIFY | WatchMask::CLOSE_WRITE).unwrap();
+    let events = notifier.event_stream().for_each(|ev| {
+        println!("Event: {:?}", ev);
+        Ok(())
+    })
+    .map_err(|e| println!("Inotify Error: {:?}", e));
 
     // timer::Interval / ticker
     // this just shows having a future/stream interval executing
