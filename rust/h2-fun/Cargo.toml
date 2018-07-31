@@ -1,0 +1,24 @@
+cargo-features = ["edition"]
+
+[package]
+edition = "2018"
+name = "h2-fun"
+version = "0.1.0"
+authors = ["Zachery Hostens <zacheryph@gmail.com>"]
+
+[[bin]]
+name = "h2-server"
+path = "src/bin/h2-server.rs"
+
+[[bin]]
+name = "h2-client"
+path = "src/bin/h2-client.rs"
+
+[dependencies]
+bincode = "1.0"
+futures = "0.1"
+h2 = "0.1"
+http = "0.1"
+serde = "1.0"
+serde_derive = "1.0"
+tokio = "0.1"
