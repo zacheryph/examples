@@ -121,6 +121,7 @@ impl Future for Peer {
                 Ok(0) => return Err(()),
                 Ok(n) => self.link.tx_buf.advance(n),
                 Err(ref e) if e.kind() == ErrorKind::Interrupted => {}
+                // Return a proper error
                 Err(_) => return Err(()),
             }
         }
@@ -139,14 +140,10 @@ fn main() {
     let listener = TcpListener::bind(&addr).unwrap();
     let server = listener
         .incoming()
-        .for_each(|conn| {
-            let client = register(conn).and_then(|link| Peer::new(link));
-            // .map_err(|err| println!("Connection failure: {}", err));
-
-            tokio::spawn(client);
+        .for_each(|sock| {
+            tokio::spawn(register(sock).and_then(Peer::new));
             Ok(())
-        })
-        .map_err(|err| println!("Failed to accept connection: {}", err));
+        }).map_err(|err| println!("Failed to accept connection: {}", err));
 
     println!("Starting Server @ {}", addr);
     tokio::run(server)
