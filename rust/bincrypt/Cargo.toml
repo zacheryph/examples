@@ -1,0 +1,12 @@
+[package]
+name = "bincrypt"
+version = "0.1.0"
+authors = ["Zachery Hostens <zacheryph@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+goblin = "0.2.3"
+bincode = "1.2.1"
+structopt = "0.3.14"
