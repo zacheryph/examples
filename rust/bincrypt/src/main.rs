@@ -100,23 +100,4 @@ fn write_elf(mut f: File, bin: Elf, values: &Vec<String>) {
     f.seek(SeekFrom::Start(section.sh_offset)).unwrap();
     f.write(&raw).unwrap();
     f.sync_data().unwrap();
-
-    //     match bin.section_headers.iter().find(|sec| &bin.shdr_strtab[sec.sh_name] == ".raw_config") {
-    //         Some(sect) => println!("RAW! offset:{} size:{}", sect.sh_offset, sect.sh_size),
-    //         None => println!("raw_config not found"),
-    //     }
-
-    //     match bin.section_headers.iter().find(|sec| &bin.shdr_strtab[sec.sh_name] == ".bincrypt_config") {
-    //         Some(sect) => {
-    //             println!("BINCRYPT! offset:{} size:{}", sect.sh_offset, sect.sh_size);
-    //             let sect_end = sect.sh_offset + sect.sh_size;
-    //             let sect = &data[sect.sh_offset as usize..sect_end as usize];
-    //             let idx = sect.windows(PREFIX.len()).position(|x| x == PREFIX).unwrap();
-    //             println!("IDX? {}", idx);
-
-    //         },
-    //         None => println!("raw_config not found"),
-    //     }
-    //     Ok(())
-    // },
 }
