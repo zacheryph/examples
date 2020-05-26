@@ -32,7 +32,7 @@ impl Add<i32> for FizzBuzz {
 
 fn main() {
     let max: i32 = match args().nth(1) {
-        Some(n) => n.parse::<i32>().unwrap(),
+        Some(n) => n.parse().unwrap(),
         None => {
             println!("usage: fizzbuzz <num>");
             ::std::process::exit(1)

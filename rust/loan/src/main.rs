@@ -1,12 +1,5 @@
 // [Mortgage] Loan calculator / amortization table
-
-#[macro_use]
-extern crate structopt;
-
-extern crate loan;
-
 use structopt::StructOpt;
-
 use loan::{print_first, print_table, print_totals, Loan};
 
 #[derive(Debug, StructOpt)]
