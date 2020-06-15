@@ -10,3 +10,5 @@ edition = "2018"
 goblin = "0.2.3"
 bincode = "1.2.1"
 structopt = "0.3.14"
+serde = { version = "1.0.110", features = ["derive"] }
+toml = "0.5.6"
