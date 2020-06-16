@@ -7,12 +7,6 @@ use std::marker::PhantomData;
 
 pub struct BinaryConfig<T, const SIZE: usize>([u8; SIZE], PhantomData<T>);
 
-impl<T, const SIZE: usize> Default for BinaryConfig<T, SIZE> {
-    fn default() -> Self {
-        BinaryConfig([0; SIZE], PhantomData)
-    }
-}
-
 pub trait BinaryLocator {
     const SECTION: &'static str;
 }
