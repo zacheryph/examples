@@ -1,32 +1,13 @@
+use super::bincrypt::{BinaryConfig, BinaryLocator};
 use serde::{Deserialize, Serialize};
-use serde::de::DeserializeOwned;
-use std::marker::PhantomData;
 
-pub struct BinaryConfig<T, const SIZE: usize>([u8; SIZE], PhantomData<T>);
+#[no_mangle]
+#[cfg_attr(target_os = "linux", link_section = ".bincrypt")]
+#[cfg_attr(target_os = "macos", link_section = "__DATA,__bincrypt")]
+pub static CONFIG: BinaryConfig<BinConfig, 512> = BinaryConfig::new();
 
-impl<T, const SIZE: usize> Default for BinaryConfig<T, SIZE> {
-    fn default() -> Self {
-        BinaryConfig([0; SIZE], PhantomData)
-    }
-}
-
-impl<T, const SIZE: usize> BinaryConfig<T, SIZE>
-where
-    T: Default + Serialize + DeserializeOwned,
-{
-    pub const fn new() -> Self {
-        Self([0; SIZE], PhantomData)
-    }
-
-    pub fn decode(&self) -> T {
-        match bincode::deserialize(&self.0) {
-            Ok(s) => s,
-            Err(e) => {
-                println!("Deserialization Error. Ignoring. Bad Binary? {}", e);
-                Default::default()
-            }
-        }
-    }
+impl BinaryLocator for BinConfig {
+    const SECTION: &'static str = "bincrypt";
 }
 
 #[derive(Default, Debug, Serialize, Deserialize)]
