@@ -7,19 +7,13 @@ fn usage() -> ! {
     std::process::exit(0);
 }
 
-trait IntoIp {
-    fn into_ip(&self) -> Ipv4Addr;
-}
 
-impl IntoIp for u32 {
-    fn into_ip(&self) -> Ipv4Addr {
-        let octets = self.to_be_bytes();
-        Ipv4Addr::new(octets[0], octets[1], octets[2], octets[3])
-    }
+fn into_ip(ip: u32) -> Ipv4Addr {
+    let octets = ip.to_be_bytes();
+    Ipv4Addr::new(octets[0], octets[1], octets[2], octets[3])
 }
-
 fn main() {
-    let args: Vec<String> = std::env::args().into_iter().collect();
+    let args: Vec<String> = std::env::args().collect();
     if args.len() < 2 { usage() }
 
     let pieces: Vec<&str> = args[1].split('/').collect();
@@ -33,8 +27,10 @@ fn main() {
     let network = netmask & ip;
     let broadcast = network | (BROADCAST >> maskbits);
 
-    println!("   cidr: {}/{}", ip.into_ip(), maskbits);
-    println!(" config: {} {}", ip.into_ip(), netmask.into_ip());
-    println!("network: {} - {}", network.into_ip(), broadcast.into_ip());
+    println!("   cidr: {}/{}", into_ip(ip), maskbits);
+    println!("netmask: {}", into_ip(netmask));
+    println!("network: {}", into_ip(network));
+    println!("  bcast: {}", into_ip(broadcast));
+    println!("gateway? {}", into_ip(network + 1));
     println!(" usable: {}", (BROADCAST >> maskbits) - 1);
 }
