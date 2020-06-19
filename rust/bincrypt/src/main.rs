@@ -63,8 +63,8 @@ fn write_settings(conf_file: &PathBuf) {
     let buf = std::fs::read(conf_file).unwrap();
     let conf: Config = serde_json::from_slice(&buf).unwrap();
     let binconf = BinConfig {
-        pack_hash: [1; 20],
-        local_hash: [2; 20],
+        pack_hash: (&conf.pack).into(),
+        local_hash: (&conf.local).into(),
         config: conf,
     };
 

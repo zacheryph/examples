@@ -1,4 +1,4 @@
-use super::bincrypt::{BinaryConfig, BinaryLocator};
+use super::bincrypt::{BinaryConfig, BinHash, BinaryLocator};
 use serde::{Deserialize, Serialize};
 
 #[no_mangle]
@@ -12,18 +12,18 @@ impl BinaryLocator for BinConfig {
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct BinConfig {
-    pub pack_hash: [u8; 20],
-    pub local_hash: [u8; 20],
+    pub pack_hash: BinHash,
+    pub local_hash: BinHash,
     pub config: Config,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Hash, Serialize, Deserialize)]
 pub struct Config {
-    pack: Pack,
-    local: Option<Local>,
+    pub pack: Pack,
+    pub local: Option<Local>,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Hash, Default, Serialize, Deserialize)]
 pub struct Pack {
     packname: String,
     shell_hash: String,
@@ -33,7 +33,7 @@ pub struct Pack {
     hubs: Vec<String>,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Hash, Default, Serialize, Deserialize)]
 pub struct Local {
     bots: Vec<String>,
     uid: usize,
