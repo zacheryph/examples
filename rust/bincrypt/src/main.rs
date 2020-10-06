@@ -10,7 +10,6 @@ use gumdrop::Options;
 use std::path::PathBuf;
 
 #[derive(Debug, Options)]
-// #[structopt(name = "bincrypt", about = "Example binary embedded configuration")]
 struct Cmd {
     #[options(help = "print help")]
     help: bool,
@@ -29,34 +28,36 @@ struct Cmd {
     write: Option<PathBuf>,
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Cmd::parse_args_default_or_exit();
     if args.version {
         println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
-        return;
+        return Ok(());
     }
     if args.help_requested() {
         println!("{}", Cmd::usage());
-        return;
+        return Ok(());
     }
-
-    let settings = CONFIG.decode();
 
     if args.template {
         println!(
             "{}",
             serde_json::to_string_pretty(&Config::default()).unwrap()
         );
-        return;
+        return Ok(());
     }
 
     if args.write.is_some() {
         write_settings(&args.write.unwrap())
     } else {
+        let settings = CONFIG.decode()?;
+
         println!("Current Settings:");
-        let conf = serde_json::to_string_pretty(&settings.config).unwrap();
+        let conf = serde_json::to_string_pretty(&settings).unwrap();
         println!("{}", conf);
     }
+
+    Ok(())
 }
 
 fn write_settings(conf_file: &PathBuf) {
