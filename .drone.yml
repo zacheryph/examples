@@ -1,0 +1,19 @@
+---
+kind: pipeline
+type: kubernetes
+name: default
+
+steps:
+- name: sonarqube
+  image: aosapps/drone-sonar-plugin
+  settings:
+    sonar_host: http://sonarqube
+    sonar_token:
+      from_secret: token
+
+---
+kind: secret
+name: token
+get:
+  path: sonarqube
+  name: token
