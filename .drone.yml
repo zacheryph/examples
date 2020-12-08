@@ -10,7 +10,7 @@ steps:
     sonar_host: http://sonarqube
     sonar_token:
       from_secret: token
-    exclusions: **/*.java
+    exclusions: "**/*.java"
 
 ---
 kind: secret
