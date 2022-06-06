@@ -5,4 +5,4 @@ authors = ["Zachery Hostens <zacheryph@gmail.com>"]
 
 [dependencies]
 bytes = "0.4.7"
-tokio = "0.1.6"
+tokio = "1.8.4"
