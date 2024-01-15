@@ -1,9 +1,12 @@
 // [Mortgage] Loan calculator / amortization table
+use loan::{print_first, print_table, print_totals, print_detail, Loan};
 use structopt::StructOpt;
-use loan::{print_first, print_table, print_totals, Loan};
 
 #[derive(Debug, StructOpt)]
 enum Detail {
+    #[structopt(name = "detail", about = "show loan calculation details")]
+    Detail,
+
     #[structopt(name = "table", about = "show amortization table")]
     Table,
 
@@ -26,8 +29,11 @@ struct Cmd {
     #[structopt(short = "y", long = "years", help = "length of the loan in years")]
     years: Option<u32>,
 
-    #[structopt(short = "p", long = "payment",
-                help = "override calculated payment (to show quicker payoff)")]
+    #[structopt(
+        short = "p",
+        long = "payment",
+        help = "override calculated payment (to show quicker payoff)"
+    )]
     payment: Option<f64>,
 
     #[structopt(subcommand)]
@@ -51,11 +57,13 @@ fn main() {
     };
 
     let rate: f64 = match opt.rate {
-        Some(r) => if r >= 0.2 {
-            r / 100.0
-        } else {
-            r
-        },
+        Some(r) => {
+            if r >= 0.2 {
+                r / 100.0
+            } else {
+                r
+            }
+        }
         None => 0.04,
     };
 
@@ -67,6 +75,7 @@ fn main() {
     println!();
 
     match opt.detail {
+        Some(Detail::Detail) => print_detail(loan),
         Some(Detail::Table) => print_table(loan),
         Some(Detail::Total) => print_totals(loan),
         None => print_first(loan),

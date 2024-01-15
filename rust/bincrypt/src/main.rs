@@ -1,6 +1,4 @@
 #![allow(incomplete_features)]
-#![feature(const_fn)]
-#![feature(const_generics)]
 
 mod bincrypt;
 mod conf;

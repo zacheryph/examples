@@ -4,6 +4,7 @@ pub struct Loan {
     pub periods: u32,
     pub period_rate: f64,
     pub payment: f64,
+    fixed_rate: f64,
 }
 
 #[derive(Debug)]
@@ -23,6 +24,7 @@ impl Loan {
             amount,
             periods,
             period_rate,
+            fixed_rate,
             payment: (amount / Loan::discount(rate, periods) * 100.0).round() / 100.0,
         }
     }
@@ -32,7 +34,7 @@ impl Loan {
     }
 
     /// Discount Factor
-    fn discount(apr: f64, periods: u32) -> f64 {
+    pub fn discount(apr: f64, periods: u32) -> f64 {
         let period_rate = apr / 12.0;
         let daily = (period_rate + 1.0).powi(periods as i32);
         (daily - 1.0) / (period_rate * daily)
@@ -74,6 +76,14 @@ pub fn print_first(mut loan: Loan) {
         println!("    Principal: ${:.2}", p.principal);
         println!("Total Payment: ${:.2}", p.amount);
     }
+}
+
+pub fn print_detail(loan: Loan) {
+    println!("Loan Details:");
+    println!("      Principal Amount: {:.2}", loan.amount);
+    println!("       Discount Factor: {:.2}", Loan::discount(loan.fixed_rate, loan.periods));
+    println!("           Period Rate: {:2}", loan.period_rate);
+    println!("               Periods: {:}", loan.periods);
 }
 
 /// Prints full amortization table
