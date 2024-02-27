@@ -1,14 +1,9 @@
-use super::bincrypt::{BinaryConfig, BinHash, BinaryLocator};
+use super::bincrypt::BinHash;
+use binary_enclave::{enclave, Enclave};
 use serde::{Deserialize, Serialize};
 
-#[no_mangle]
-#[cfg_attr(target_os = "linux", link_section = ".bincrypt")]
-#[cfg_attr(target_os = "macos", link_section = "__DATA,__bincrypt")]
-pub static CONFIG: BinaryConfig<BinConfig, 512> = BinaryConfig::new();
-
-impl BinaryLocator for BinConfig {
-    const SECTION: &'static str = "bincrypt";
-}
+#[enclave(botpack)]
+pub static CONFIG: Enclave<BinConfig, 512> = Enclave::new();
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 pub struct BinConfig {
